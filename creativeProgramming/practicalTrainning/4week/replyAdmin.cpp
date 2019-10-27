@@ -89,11 +89,10 @@ int main(int argc,char** argv){
                         int count = 0;
                         char *cinput = strConvert(input); 
                         char *number =strtok(cinput,",");
-                        cout << "number is : " << number <<endl;
                         while( number != NULL){
                             int index = atoi(number) - count; //convert char to int.
                             cout << index <<endl;
-                            number = strtok(number,",");    
+                            number = strtok(NULL,","); //I dont know why first parameter must be nullptr.     
                             removeChat(chatList,index);
                             count++;
                         }
