@@ -33,7 +33,6 @@ bool ReplyAdmin::addChat(string _chats){
 }
 bool ReplyAdmin::removeChat(int _index){
     int count = getChatCount();
-    cout << "removeChat _index is in!"<<endl;
     if(chats[_index].empty() == true)
         return false;
     else{
@@ -70,7 +69,6 @@ bool ReplyAdmin::removeChat(int *_indices,int _count){
                 return false;
             }// {} removed!
             else{
-                cout << "indices["<<i<<"] - "<< trials << " : "<<indices[i]-trials<<endl;
                 removeChat(indices[i]-trials);
                 trials++;
                 /*if(index == 0){

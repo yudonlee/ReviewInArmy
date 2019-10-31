@@ -27,9 +27,7 @@ int main(){
                           char *number =strtok(cinput,",");
                           while( number != NULL){
                               int index = atoi(number); //  - count; //convert char to int.
-                              cout << index <<endl;
                               indices[count] = index;
-                              cout <<"indices[ "<<count<<"] is : "<<indices[count]<<endl;
                               number = strtok(NULL,","); //I dont know why first parameter must be null
                               count++;
                           }
