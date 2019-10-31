@@ -81,7 +81,7 @@ int main(int argc,char** argv){
     initialization(chatList);
     while(true){
         string input;
-        cin >> input;
+        cin >>input;
         if(input.find("#") == 0){
             if(input.find("#remove") != string::npos){
                     cin >> input;
@@ -123,9 +123,12 @@ int main(int argc,char** argv){
                     return 0;
                        
         }
-        else
+        else{
+            string all;
+            getline(cin,all);
+            input += all;
             insertChat(chatList,input);
- 
+        } 
 
 
     

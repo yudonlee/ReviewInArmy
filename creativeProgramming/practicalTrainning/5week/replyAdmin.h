@@ -27,4 +27,6 @@ class ReplyAdmin{
         bool removeChat(int _index);
         bool removeChat(int *_indices,int _count);
         bool removeChat(int _start,int _end);      
-}
+};
+
+#endif
