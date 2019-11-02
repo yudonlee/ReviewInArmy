@@ -57,12 +57,12 @@ void removeChat(string *_chatList,int index){
              if(index == 0){
                  if(count == 1)
                         _chatList[0].clear();
-                else{
-                    for(int i=0;i<count-1;i++)
-                       _chatList[i]=_chatList[i+1];
-                       _chatList[count].clear();
-                }     
-           }
+                 else{
+                     for(int i=0;i<count-1;i++)
+                        _chatList[i]=_chatList[i+1];
+                        _chatList[count].clear();
+                 }     
+             }
             else{
                 if(count == index-1)
                     _chatList[index].clear();
