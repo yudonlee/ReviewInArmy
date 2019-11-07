@@ -1,3 +1,6 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
 // simple_int_set.h
 // Implement your simple_int_set.cc
 

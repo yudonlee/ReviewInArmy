@@ -1,0 +1,44 @@
+simple_int_set_main.cc: In function ‘int main()’:
+simple_int_set_main.cc:150:16: error: ‘type’ was not declared in this scope
+         switch(type)
+                ^~~~
+simple_int_set_main.cc:150:16: note: suggested alternative: ‘wctype’
+         switch(type)
+                ^~~~
+                wctype
+simple_int_set_main.cc:156:23: error: request for member ‘unionSet’ in ‘std::left’, which is of non-class type ‘std::ios_base&(std::ios_base&)’
+                 left->unionSet(*right); break;
+                       ^~~~~~~~
+simple_int_set_main.cc:160:23: error: request for member ‘differenceSet’ in ‘std::left’, which is of non-class type ‘std::ios_base&(std::ios_base&)’
+                 left->differenceSet(*right); break;
+                       ^~~~~~~~~~~~~
+simple_int_set_main.cc:164:23: error: request for member ‘intersectSet’ in ‘std::left’, which is of non-class type ‘std::ios_base&(std::ios_base&)’
+                 left->intersectSet(*right); break;
+                       ^~~~~~~~~~~~
+simple_int_set_main.cc:170:12: error: ‘type’ was not declared in this scope
+         if(type != Invalid) left->printSet();
+            ^~~~
+simple_int_set_main.cc:170:12: note: suggested alternative: ‘wctype’
+         if(type != Invalid) left->printSet();
+            ^~~~
+            wctype
+simple_int_set_main.cc:170:35: error: request for member ‘printSet’ in ‘std::left’, which is of non-class type ‘std::ios_base&(std::ios_base&)’
+         if(type != Invalid) left->printSet();
+                                   ^~~~~~~~
+simple_int_set_main.cc:174:16: error: cannot delete a function.  Only pointer-to-objects are valid arguments to ‘delete’
+         delete left;
+                ^~~~
+simple_int_set_main.cc:176:16: error: cannot delete a function.  Only pointer-to-objects are valid arguments to ‘delete’
+         delete right;
+                ^~~~~
+simple_int_set_main.cc:178:12: error: ‘argv’ was not declared in this scope
+  delete [] argv;
+            ^~~~
+simple_int_set_main.cc: At global scope:
+simple_int_set_main.cc:182:5: error: expected unqualified-id before ‘return’
+     return 0;
+     ^~~~~~
+simple_int_set_main.cc:184:1: error: expected declaration before ‘}’ token
+ }
+ ^
+make: *** [simple_int_set_main.o] Error 1

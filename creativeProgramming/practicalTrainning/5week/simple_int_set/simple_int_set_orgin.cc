@@ -29,11 +29,28 @@ SimpleIntSet::SimpleIntSet(int *_elements, int _count){
                 mElements[j] = mElements[j+1]; // so if 1 1 2 3 -> 1 2 3 3 the last one is estimated garbage data.
         }
     }
+    /* 
+    mElementCount = count - trials; //this represent num of element when remove duplicated one.
+    int *element = new int[mElementCount];    
+    memcpy(element,mElementCount,sizeof(int)*mElementCount);
+    mElements = element;
+    */
 }
 int SimpleIntSet::elementCount()const{
     return mElementCount;
 }
 int* SimpleIntSet:: elements()const{
+    /*int count = mElementCount;
+    int trials = 0;        
+    for(int i = 0;i<count - trials;i++){
+        if(mElements[i] == mElements[i+1]){
+            trials++;
+            for(int j = i; j < count - trials ; j++)
+                mElements[j] = mElements[j+1]; // so if 1 1 2 3 -> 1 2 3 3 the last one is estimated garbage data.
+        }
+    }   
+    mElementCount = count - trials; //this represent num of element when remove duplicated one.
+   */ 
     return mElements;    
 }
 
@@ -48,90 +65,72 @@ SimpleIntSet* SimpleIntSet:: unionSet(SimpleIntSet& _operand){
     int* left = this->elements();
     int* right = _operand.elements();
     int count = 0;
-        int i =0,j = 0;
-        while( i < rightCount){
-            while( j < leftCount){
+    if(leftCount > rightCount){
+        int i,j;
+        for(i=0; i < rightCount; i++){
+            for(j=0; j < leftCount; j++){
                 if(right[i] > left[j])
-                    element[count++] = left[j++];
-                else if( right[i] == left[j]){
-                    element[count++] = left[j++];
-                    i++;
-                    break;
-                }
+                    element[count++] = left[j];
                 else{
-                    element[count++] = right[i++];
+                    element[count++] = right[j];
                     break;
                 }
             }
-            if( j == leftCount)
-                break;
         }
-        if( j <= leftCount - 1)
-            while( j < leftCount)
-                element[count++] = left[j++];
-            
-        if( i <= rightCount - 1) 
-            while( i < rightCount)
-                element[count++] = right[i++];
-    /*
-        else{
-        int i = 0 ,j = 0 ;
-        while( i < leftCount ) {
-            while( j < rightCount){
+        if( j < leftCount - 1)
+            for( j < leftCount; j++;)
+                element[count++] = left[j];
+        if( i < rightCount - 1) 
+            for( i < rightCount; i++;)
+                element[count++] = right[i];
+    }
+    else{
+        int i,j;
+        for(i=0; i < leftCount; i++){
+            for(j=0; j < rightCount; j++){
                 if(left[i] > right[j])
                     element[count++] = right[j];
                 else{
-                    element[count++] = left[i];
+                    element[count++] = left[j];
                     break;
                 }
-                j++;
             }
-            i++;
         }
-        cout << " j is : "<<j <<"  i is :  "<<i <<endl;
-        if( j < rightCount - 1){
-            while( j < rightCount) // why j++; ? dont be right just j++?"
-                element[count++] = right[j++];
-        }
+        if( j < rightCount - 1)
+            for( j < rightCount; j++;) // why j++; ? dont be right just j++?"
+                element[count++] = right[j];
         if( i < leftCount - 1) 
-            while( i < leftCount){
-                element[count++] = left[i++];
-            }
+            for( i < leftCount; i++;)
+                element[count++] = left[i];
     }
-    */
     mElements = element;
     mElementCount = count;
+    /*cout <<"{ ";
+    for(int i = 0; i < count; i++)
+        cout << element[i]<< " ";
+    cout<<"}"<<endl;
+   */
 }
 SimpleIntSet* SimpleIntSet::differenceSet(SimpleIntSet& _operand){
     int* left = elements();
     int leftCount = elementCount();
     int* right = _operand.elements();
     int rightCount = _operand.elementCount();
-    int trials = 0;
-    int i=0, j=0;
-    while( i < leftCount - trials){
-        while( j < rightCount && i < leftCount -trials){ // i have a problem in this statement. while in while~! i think that i doesnt need to be considerded but Big while i < leftCount -trials is correct but in while loop i can be any integer because inner i doesnt influence outer i.
+    int trials;
+    for(int i=0; i < leftCount - trials; i++){
+        for(int j = 0; j < rightCount; j++){
             if(left[i] == right[j]){
-                for(int k = i; k < leftCount - trials; k++){
-                    if(k == leftCount -trials -1)
-                        left[k] = 0;
-                    else
-                        left[k] = left[k+1];
-                }
-                trials++;
-                i--;
-                j++;
+                for(int k = i; k < leftCount - trials; k++)
+                    left[k] = left[k+1];
             }
-            else if(left[i] > right[j])
-                j++;
-            else
-                i++;
         }
-        if( j == rightCount)
-            break;
     }
     mElementCount = leftCount - trials;
     mElements = left;
+    /*cout <<"{ ";
+    for(int i = 0; i < leftCount - trials; i++)
+        cout << left[i]<< " ";
+    cout<<"}"<<endl;*/
 }
 SimpleIntSet* SimpleIntSet:: intersectSet(SimpleIntSet& _operand){
     int max;
@@ -171,13 +170,49 @@ SimpleIntSet* SimpleIntSet:: intersectSet(SimpleIntSet& _operand){
     }
     mElements = element;
     mElementCount = count;
+    /*vector<int> result;
+    }
+    int* left = elements();
+    int leftCount = elementCount();
+    int* right = _operand.elements();
+    int rightCount = _operand.elementCount();
+    if(leftCount > rightCount){
+        for(int i=0; i < rightCount; i++){
+            for(int j = 0; j<leftCount ; j++){
+                if(right[i] == left[j]){
+                    result.push_back(right[i]);
+                    break;
+                }
+                else if(right[i] < left[j])
+                    break;
+                else{} //no need to do.
+            }
+        }
+    }
+    else
+        for(int i=0; i < leftCount; i++){
+            for(int j = 0; j<rightCount ; j++){
+                if(left[i] == right[j]){
+                    result.push_back(left[i]);
+                    break;
+                }
+                else if(left[i] < right[j])
+                    break;
+                else{} //no need to do.
+            }
+        }
+    cout <<"{ ";
+    vector<int>::iterator iter;
+    for(iter = result.begin(); iter != result.end(); iter++)
+        cout << *iter<< " ";
+    cout<<"}"<<endl;
+   */
 }
 SimpleIntSet:: ~SimpleIntSet(){
     delete mElements;
    mElementCount = 0;
 }
 void SimpleIntSet:: printSet(){
-    cout<<"{ ";
     for(int i=0; i < mElementCount; i++)
         cout<<mElements[i]<<" ";
     cout<<"}"<<endl;
