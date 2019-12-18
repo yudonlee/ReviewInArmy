@@ -13,12 +13,11 @@ int main() {
 				cout << "Black:";
 			cin >> x_ >> y_;
 			present_turn = omok.put(x_, y_);
-			if (present_turn == present_turn)
+			if (present_turn == prev_turn)
 				cout << "Can not be placed there!\n";
 		}
 		omok.IsOmok(&winner, x_, y_);
 		cout << omok << endl;
-		cout << "winner : " << winner << endl;
 		if (winner == BLACK || winner == WHITE) {
 			if (winner == BLACK)
 				cout << "Winner: Black player" << endl;
@@ -26,7 +25,7 @@ int main() {
 				cout << "Winner: White player" << endl;
 			break;
 		}
-		prev_turn = present_turn; // 새 입력문을 사용할때 필요함. 새로운 턴이기에 바뀌는것도 반영해야 하므로 그 이전판을 업데이트 해줄 필요가 있음.
+		prev_turn = present_turn; //this is necessary to get input x and y when condition in while loop is that present turn and previous turn is same. previous turn is now updated because present turn will be changed.
 	}
 	return 0;
 }

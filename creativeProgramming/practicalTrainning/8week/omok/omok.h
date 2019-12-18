@@ -22,11 +22,11 @@ public:
 			result_row.clear();
 		}
 	}
-	int put(int x, int y); //if return value is same with previous value,then it needs to be again. +추가해서 만약 판의 밖의 위치에 오목을 두고자 할때도 다시해야함 이거설정하기.
+	int put(int x, int y); //if return value is same with previous turn,then it needs to be again. the reason that return value is same is like input x,y is out of range or stone is already there.
 	void IsOmok(int* winner, int last_x, int last_y) const; // the meaning of void const method is 2 things. 1st, any variable cannot be changed in this method.2nd,only const method can be called in this method.
 	//two lines below are needed to execute operator <<. because operator overloading does not use friend.so ostream cannot access private member varaible.
-	//I want to make 2 parameter.the last input in x,y will use to check whether omok or not.because latest omok is the key in winning.
+	//I want to make 2 parameter.the last input in x,y will use to check whether omok or not.because latest omok is the key in winning and if using them, it is more fast to check omok.
 	int Turn() const { return turn_; }
-	vector<string> Result() const { return result; }
+	vector<string> Result() const { return result; } // ostream overloading is not usign freind ,so i make a getter for result.
 };
 ostream& operator<<(ostream& os, Omok& omok);
