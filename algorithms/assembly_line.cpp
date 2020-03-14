@@ -46,64 +46,20 @@ int* assembly_line(int* a1, int* a2, int* t1, int* t2, int station, int e1, int 
 		if (time[0][index] + a1[i+1] > time[1][index] + t2[i] + a1[i+1]) {
 			line1[i] = 2;
 			time[0][compare_index] = time[1][index] + t2[i]+a1[i+1];
-			/*cout << "time[0]["<<compare_index<<"]: " << time[0][compare_index] << endl;
-			if (index == 0) {
-				time[0][compare_index] = time[1][index] + t2[i];
-				cout << "time table: " << time[index + 1][0] << endl;
-				index++;
-			}
-			else{
-				time[index - 1][0] = time[index][1] + t2[i];
-				cout << "time table: " << time[index -1][0] << endl;
-				index--;
-			}*/
 		}
 		else {
 			line1[i] = 1;
 			time[0][compare_index] = time[0][index] + a1[i + 1];
-			/*cout << "time[0][" << compare_index << "]: " << time[0][compare_index] << endl;
-			if (index == 0) {
-				time[index+1][0] = time[index][0] + a1[i + 1];
-				cout << "time table: " << time[index + 1][0] << endl;
-				index++;
-			}
-			else {
-				time[index-1][0] = time[index][0] + a1[i + 1];
-				cout << "time table: " << time[index -1][0] << endl;
-				index--;
-			}*/
 		}
 		if (time[1][index] + a2[i + 1] > time[0][index] + a2[i+1] +t1[i]) {
 			line2[i] = 1;
 			time[1][compare_index] = time[0][index] + a2[i+1] + t1[i];
-			//cout << "time[1][" << compare_index << "]: " << time[1][compare_index] << endl;
 			temp_index = index, index = compare_index, compare_index = temp_index;
-			/*if (index == 0) {
-				time[index + 1][1] = time[index][0] + t1[i];
-				cout << "time table: " << time[index + 1][1] << endl;
-				index++;
-			}
-			else {
-				time[index - 1][1] = time[index][0] + t1[i];
-				cout << "time table: " << time[index -1][1] << endl;
-				index--;
-			}*/
 		}
 		else {
 			line2[i] = 2;
 			time[1][compare_index] = time[1][index] + a2[i+1];
-			//cout << "time[1][" << compare_index << "]: " << time[1][compare_index] << endl;
 			temp_index = index, index = compare_index, compare_index = temp_index;
-			/*if (index == 0) {
-				time[index + 1][1] = time[index][1] + a2[i + 1];
-				cout << "time table: " << time[index + 1][1] << endl;
-				index++;
-			}
-			else {
-				time[index - 1][1] = time[index][1] + a2[i + 1];
-				cout << "time table: " << time[index -1][1] << endl;
-				index--;
-			}*/
 		}
 	}
 	if (time[0][index] + x1 > time[1][index] + x2){
