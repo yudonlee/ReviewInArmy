@@ -43,13 +43,12 @@ int matrix_chain_multiplication(int* matrix, int scalar, int** min, int** slice)
 void print_parenthesis(int i,int j, int** slice)
 {	
 	if (i != j) {
-		cout << "(";
+		cout << "(" <<" ";
 		print_parenthesis(i, slice[i][j], slice);
 		print_parenthesis(slice[i][j]+1, j, slice);
-		cout << ")";
+		cout << ")" <<" ";
 	}
 	else {
-		cout << i;
+		cout << i <<" ";
 	}
-	//i'm genious~!~~~~~~~~ succeess in one try! good job~~ 
 }
