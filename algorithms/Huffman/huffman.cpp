@@ -26,7 +26,7 @@ typedef struct _Heaptype{
 	Node* heap;
 	Node* head;
 }Heaptype;
-Node* extract_keys(Node* heap, int number); //return value is number of array.
+Node* extract_keys(Node* heap, int number); //**return value is object. ** key point.
 void BuildMinHeap(int heap_size, Heaptype heaptype);
 void Huffman(int number, Heaptype heaptype);
 void preorder(Node* head, int level);
@@ -53,7 +53,6 @@ int main() {
 	Huffman(heap_size, heaptype);
 	cout << sum_freq * bit << endl;
 	cout <<g_result << endl;
-	//cout << "function exit!" << endl;
 	return 0;
 }
 void MinHeapify(int number, Node* heap, int index);
@@ -65,10 +64,9 @@ void swap_element(Node* heap, int left, int right) {
 	heap[right] = temp;
 }
 void MinHeapify(int number, Node* heap, int index) {
-	//only left node is only child_node
 	int left_child = left(index);
 	int right_child = right(index);
-	if (right_child > number) {  //that is missing point!!! i only consider right_child but left_child is also bigger than heap_size in other case.
+	if (right_child > number) {  
 		if (heap[index].source.freq >= heap[left_child].source.freq && left_child <= number) {
 			swap_element(heap, left_child, index);
 			MinHeapify(number, heap, left_child);
@@ -92,9 +90,8 @@ void MinHeapify(int number, Node* heap, int index) {
 
 Node* extract_keys(Node* heap, int number)
 {
-	//Node result = heap[1];
-	Node* result = new Node(heap[1]);
-	//cout << "result & value is: " << result;
+	//Node result = heap[1]; i make the missing point this one.the shallow copy on left_chid,right_child node. only  element structure can be copied succeessfully.
+	Node* result = new Node(heap[1]); //so i use "new" to construct new object.
 	swap_element(heap, 1, number);
 	MinHeapify(number - 1, heap, 1);
 	g_heap_size--;
@@ -107,7 +104,6 @@ void BuildMinHeap(int heap_size, Heaptype heaptype)
 }
 void insert(Node* heap,Node input)
 {
-	//cout << "in  insert: " << endl;
 	g_heap_size++;
 	heap[g_heap_size].source.freq = -100;
 	if (g_heap_size > 1)
@@ -118,19 +114,94 @@ void insert(Node* heap,Node input)
 		
 }
 void Increase_key(Node* heap,int index, Node input){
-	/*cout << "in  increase: " << endl;*/
 	heap[g_heap_size] = input;
 	int index_parent = parent(index);
 	while (input.source.freq > heap[index_parent].source.freq) {
 		swap_element(heap, index_parent, index);
 		index = parent(index);
 		index_parent = parent(index);
-	} //find the position if increase_key is bigger than parent. 
+	} 
 	MinHeapify(g_heap_size,heap, index);
-	//for (int i = 1; i <= g_heap_size; i++)
-	//	cout << i << "th is:" << heap[i].source.freq << endl;
 }
 
+void Huffman(int heap_size, Heaptype heaptype) 
+{
+	g_heap_size = heap_size;
+	BuildMinHeap(heap_size, heaptype);
+	while (g_heap_size > 1) {
+		Node* left = extract_keys(heaptype.heap, g_heap_size);
+		Node* right = extract_keys(heaptype.heap, g_heap_size);
+	if (left->source.is_internal == LEAF_NODE && right->source.is_internal == LEAF_NODE) {
+			Node* new_internal = new Node;
+			new_internal->source.freq = left->source.freq + right->source.freq;
+			new_internal->source.is_internal = INTERNAL_NODE;
+			if (left->source.freq > right->source.freq) {
+				new_internal->left_child = right;
+				new_internal->right_child = left;
+			}
+			else {
+				new_internal->left_child = left;
+				new_internal->right_child = right;
+			}
+			insert(heaptype.heap, *new_internal);
+		}
+		else if (left->source.is_internal == INTERNAL_NODE && right->source.is_internal == INTERNAL_NODE) {
+			Node* new_internal = new Node;
+			new_internal->source.freq = left->source.freq + right->source.freq;
+			new_internal->source.is_internal = INTERNAL_NODE;
+			if (left->source.freq > right->source.freq) {
+				new_internal->left_child = right;
+				new_internal->right_child = left;
+			}
+			else {
+				new_internal->left_child = left;
+				new_internal->right_child = right;
+			}
+			insert(heaptype.heap, *new_internal);
+		}
+		else {
+			Node* new_internal = new Node;
+			new_internal->source.freq = left->source.freq + right->source.freq;
+			new_internal->source.is_internal = INTERNAL_NODE;
+			if (left->source.freq > right->source.freq) {
+				new_internal->left_child = right;
+				new_internal->right_child = left;
+			}
+			else {
+				new_internal->left_child = left;
+				new_internal->right_child = right;
+			}
+			insert(heaptype.heap, *new_internal);
+		}
+	}
+	preorder(&heaptype.heap[1],0);
+	
+}
+
+void preorder(Node* head, int level) {
+	
+	if (head->source.is_internal == LEAF_NODE) {
+		head->source.var = level;
+		g_result += head->source.var * head->source.freq;
+	}
+	if (head->left_child != NULL)
+		preorder(head->left_child,level+1);
+	if (head->right_child != NULL)
+		preorder(head->right_child,level+1);
+}
+
+int calculate_bit(int heap_size)
+{
+	int binary=1;
+	int bit = 0;
+	while (binary < heap_size) {
+		binary *= 2;
+		bit++;
+	}
+	return bit;
+}
+
+//this is my faliure code. only copying the return value is making an error that the left child and the right child had the same address value as before in iteration statement. 
 //void Huffman(int heap_size, Heaptype heaptype)
 //{
 //	g_heap_size = heap_size;
@@ -195,105 +266,3 @@ void Increase_key(Node* heap,int index, Node input){
 //	cout << "right value: " << heaptype.heap[1].right_child->source.freq << "right left " << heaptype.heap[1].right_child->left_child->source.freq << endl;
 //}
 //
-
-
-
-void Huffman(int heap_size, Heaptype heaptype) //일단 memcpy를 써보자 shallow copy 에의한 문제가 너무힘들당. 시간내에못함
-{
-	g_heap_size = heap_size;
-	BuildMinHeap(heap_size, heaptype);
-	while (g_heap_size > 1) {
-		Node* left = extract_keys(heaptype.heap, g_heap_size);
-		Node* right = extract_keys(heaptype.heap, g_heap_size);
-		/*Node _left = extract_keys(heaptype.heap, g_heap_size);
-		cout << "left & value : " << &left << endl;
-		Node _right = extract_keys(heaptype.heap, g_heap_size);
-		Node* left = new Node;
-		left->left_child = _left.left_child;
-		left->right_child= _left.right_child;
-		left->source.freq = _left.source.freq;
-		left->source.is_internal = _left.source.is_internal;
-		strcpy_s(left->source.name , _left.source.name);
-		Node* right = new Node;
-
-		right->left_child = _right.left_child;
-		right->right_child = _right.right_child;
-		right->source.freq = _right.source.freq;
-		right->source.is_internal = _right.source.is_internal;
-		strcpy_s(right->source.name, _right.source.name);
-		cout << "right & value : " << &right << endl;
-		*/if (left->source.is_internal == LEAF_NODE && right->source.is_internal == LEAF_NODE) {
-			Node* new_internal = new Node;
-			new_internal->source.freq = left->source.freq + right->source.freq;
-			new_internal->source.is_internal = INTERNAL_NODE;
-			if (left->source.freq > right->source.freq) {
-				new_internal->left_child = right;
-				new_internal->right_child = left;
-			}
-			else {
-				new_internal->left_child = left;
-				new_internal->right_child = right;
-			}
-			insert(heaptype.heap, *new_internal);
-		//	cout << "internal value is: "<<new_internal->source.freq<<"internal left is: " << new_internal->left_child << "  right is: " << new_internal->right_child << endl;
-			// insert in heap .. g _heap_size ++.
-		}
-		else if (left->source.is_internal == INTERNAL_NODE && right->source.is_internal == INTERNAL_NODE) {
-			Node* new_internal = new Node;
-			new_internal->source.freq = left->source.freq + right->source.freq;
-			new_internal->source.is_internal = INTERNAL_NODE;
-			if (left->source.freq > right->source.freq) {
-				new_internal->left_child = right;
-				new_internal->right_child = left;
-			}
-			else {
-				new_internal->left_child = left;
-				new_internal->right_child = right;
-			}
-			insert(heaptype.heap, *new_internal);
-			//cout << "internal value is: " << new_internal->source.freq << "internal left is: " << new_internal->left_child << "  right is: " << new_internal->right_child << endl;
-			// insert in heap .. g _heap_size ++.
-		}
-		else {
-			Node* new_internal = new Node;
-			new_internal->source.freq = left->source.freq + right->source.freq;
-			new_internal->source.is_internal = INTERNAL_NODE;
-			if (left->source.freq > right->source.freq) {
-				new_internal->left_child = right;
-				new_internal->right_child = left;
-			}
-			else {
-				new_internal->left_child = left;
-				new_internal->right_child = right;
-			}
-			insert(heaptype.heap, *new_internal);
-			//cout << "internal value is: " << new_internal->source.freq << "internal left is: " << new_internal->left_child << "  right is: " << new_internal->right_child << endl;
-			// insert in heap .. g _heap_size ++.
-		}
-	}
-	preorder(&heaptype.heap[1],0);
-	
-}
-
-void preorder(Node* head, int level) {
-	
-	if (head->source.is_internal == LEAF_NODE) {
-		head->source.var = level;
-		g_result += head->source.var * head->source.freq;
-	}
-	if (head->left_child != NULL)
-		preorder(head->left_child,level+1);
-	if (head->right_child != NULL)
-		preorder(head->right_child,level+1);
-}
-
-int calculate_bit(int heap_size)
-{
-	int binary=1;
-	int bit = 0;
-	while (binary < heap_size) {
-		binary *= 2;
-		bit++;
-	}
-	return bit;
-}
