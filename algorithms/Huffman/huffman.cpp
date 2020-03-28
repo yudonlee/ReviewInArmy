@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdio.h>
+#include <string.h>
 using namespace std;
 #define left(i) 2*i
 #define right(i) 2*i+1
@@ -42,7 +43,7 @@ int main() {
 		cin >> input >> freq;
 		sum_freq += freq;
 		heaptype.heap[i].source.freq = freq;
-		strcpy_s(heaptype.heap[i].source.name, input);
+		strcpy(heaptype.heap[i].source.name, input);
 		heaptype.heap[i].source.is_internal = LEAF_NODE;
 		heaptype.heap[1].source.var = 0;
 		heaptype.heap[i].left_child = NULL;

@@ -1,6 +1,5 @@
 #include <iostream>
 #include <stdio.h>
-#include "rod_cutting.h"
 using namespace std;
 int bottom_up_rod_cutting(int number, int* price, int* rod, int* slice);
 void rod_cutting_print(int number,int rod_length ,int* slice);
