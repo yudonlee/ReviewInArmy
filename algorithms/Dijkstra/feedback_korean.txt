@@ -1,0 +1,39 @@
+Dijkstra algorithm을 구현하는데 있어서 논리적인 흐름대로 구조를 짜는것은 쉬웠으나 
+과거에 구현해놨던 priorty_queue를 쓰는과정에서 Maxheap을 인지하지 못해 결과가 이상하게
+나왔던 것도 있었고 Dijkstra 에서 vertex 구조체를 만들어서 사용할때 나조차도 멤버변수의 사용을 헷갈려 하여서
+element 원소들간 distance의 거리를 비교할때 구현했던 코드가 잘못 되어있었다
+ 만약 1->2->3으로 가는것이 1->3보다 더욱작다고 할때 1->2 distance + 2->3 distance 는 1->3 distance이다라고 
+값을 대입했어야 하는데 2->3 distance를 1->3 distance로 잘못 구현해놔 debugging을 하는 과정에서 눈치챘다.
+코드를 짤때는 항상 조심해야 하고 코드를 끊임없이 의심해보아야 할것 같다. Dijsktra 함수를 구현하는 과정에서 
+heap의 크기가 공부할때는 항상 vertex의 크기보다 클수 없어 vertex* heap = new vertex[vertex_number+1]로 해놓고
+heap에 저장시켰다.하지만 edge를 항상 insert에 저장할때 1->2->3이 1->4->3보다 distance가 작아서 만약 수정하고 이를
+heap에 넣을때 넣기전에 1->4->3을 heap에서 찾아서 삭제하는 코드를 추가해야한다는  추가비용이 발생했다. 
+vertex간의 거리와 node number 그리고 status 를 저장해놨던 array인 vertex를 수정한다 해도 stack영역에서
+값을 복사하는 것에 그친 heap array를 동시에 같은 주소로 지정하여 고쳤다간 shallow copy에 의한 값이 뒤죽박죽
+될수 있다고 생각했다. 그리하여 동시 수정코드를 만들기 보다는 나중에 Extract한 vertex가 만약 WHITE 상태가 아닌
+black 상태라면 다시 Extract 함으로써 Dijkstra알고리즘에서 요구하는 vertex들을 모두 1번씩 뽑는것을  유도했다.(실제로 
+input.txt 파일을 통해 output 을 점검했을때  heap의 inserting 및 Extracting 구조는 다음과 같다)
+
+inserting element to heap is: 1    0
+Extracting element from heap is: 1  0
+inserting element to heap is: 2    10  <--------------point
+inserting element to heap is: 3    5
+Extracting element from heap is: 3  5
+inserting element to heap is: 2    8    <---------------point
+inserting element to heap is: 4    14
+inserting element to heap is: 5    7
+Extracting element from heap is: 5  7
+inserting element to heap is: 4    13
+Extracting element from heap is: 2  8
+inserting element to heap is: 4    9
+Extracting element from heap is: 4  9
+
+point가 적힌 두곳을 비교해봤을때 pdf를 통해 본 Dijkstra 구조에서는 (2,10)이 (2,8)로 바뀌어야 하지만 그럴 수 없었다.
+priority_queue를 reading 하여 같은 값을 찾아내는 비용인 logN + increase_key 함수를 작동하여 min heapify 하는 비용
+logN 결국 최소 2logN의 비용이 들수있다. 하지만 space complexity를 조금 포기하더라도 insert를 한번더 해 increase_key
+를 한번만 한다면 최소 logN 의 time complexity 만으로도 만들어 낼수 있다. 그리하여 increase_key를 통해 값수정 하기 위해
+ find_index라는 부가적인 함수를 만들지 않고 함수구현을 끝냈다.   
+
+heap에는 당연히 모든vertex가 들어가고,한번씩 vertex를 뽑았고 for문은 vertex의 개수만큼만 loop가 도는 구조이기에 무한루프가 
+발생할 염려를 하지 않았고, ExtractMin 함수를 수정할때도 heap_size가 0일때 뽑는다는 가정은 하지않았다.(그러한 예외사항은
+ Dijkstra 알고리즘때 일어나지 않을것이고 그걸 한번더 방지하고자 for문또한 두엇기때문이다.)

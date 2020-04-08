@@ -18,7 +18,7 @@ void Increase_key(vertex* element, int index, vertex key);
 int Dijkstra(vector< vector<pair<int, int> > > edge, int number,int edge_num);
 vertex ExtractMin(vertex* element); //return value is number of array.
 void MinHeapify(vertex* element, int index);
-void insert(vertex* element, vertex key);
+void insert(vertex* heap, vertex key,vertex* element);
 void swap_element(vertex* element, int left, int right) {
 
 	vertex temp = element[left];
@@ -40,7 +40,6 @@ int main() {
 	}
 	int result = Dijkstra(edge_list, number,edge_num);
 	cout <<  result << endl;
-	/*cout << "result is:L " << result << endl;*/
 	return 0;
 }
 
@@ -52,44 +51,42 @@ void Increase_key(vertex* element, int index, vertex key)
 			swap_element(element, index_parent, index);
 			index = parent(index);
 			index_parent = parent(index);
-		} //find the position if increase_key is bigger than parent. 
+		} //find the position if increase_key is smaller  than parent. 
 		MinHeapify(element, index);
 }
 
 int Dijkstra(vector<vector<pair<int, int>>> edge, int number,int edge_num)
 {
-	int result = -10;
-	vertex* element = new vertex[number + 1];
+	int result;
+	vertex* element = new vertex[number + 1]; //this is array for storing the 
 	element[1] = { 1,0,WHITE };
 	for (int i = 2; i <= number; i++) 
 		element[i] = { i,INFINITY ,WHITE};
 	vertex* heap = new vertex[edge_num+1];
-	insert(heap, element[1]);
+	insert(heap, element[1],element);
 	
 	for (int i = 1; i <= number; i++) {
 		vertex index = ExtractMin(heap);
-		//cout << " extract node is: " << index.node << "distance is: " << index.distance;
-		element[index.node].status = BLACK;
-		//cout << "in extract pass is : " << index.node << endl;
-		for (vector<pair<int, int>>::iterator iter = edge[index.node].begin(); iter != edge[index.node].end(); iter++) {
-			if (element[(*iter).first].distance == INFINITY && element[(*iter).first].status == WHITE){
-			//	cout << "first is : " << (*iter).first << endl;
-				element[(*iter).first].distance = (*iter).second + index.distance;
-				vertex key = { (*iter).first,(*iter).second  +index.distance,WHITE};
-				insert(heap, key);
-			}
-			else if(element[(*iter).first].status == WHITE){
-			//	cout << "first is : " << (*iter).first << endl;
-				if (element[(*iter).first].distance > element[index.node].distance + (*iter).second) {
+		while (element[index.node].status != WHITE) {
+			index = ExtractMin(heap);					//this prevent extracing the element already blacked.
+		}
+		if (i != number) {
+			for (vector<pair<int, int>>::iterator iter = edge[index.node].begin(); iter != edge[index.node].end(); iter++) {
+				if (element[(*iter).first].distance == INFINITY && element[(*iter).first].status == WHITE) {
+					element[(*iter).first].distance = (*iter).second + index.distance;
+					vertex key = { (*iter).first,(*iter).second + element[index.node].distance,WHITE };
+					insert(heap, key, element);
+				}
+				else if (element[(*iter).first].distance > element[index.node].distance + (*iter).second && element[(*iter).first].status == WHITE) {
 					element[(*iter).first].distance = element[index.node].distance + (*iter).second;
-					vertex key = { (*iter).first,(*iter).second+ index.distance,WHITE };
-					insert(heap, key);
+					vertex key = { (*iter).first,(*iter).second + element[index.node].distance,WHITE };
+					insert(heap, key, element);
 				}
 			}
-			if(i == number){
-				result = element[index.node].distance;
-			}
 		}
+		else
+			result = element[index.node].distance;
+		element[index.node].status == BLACK;
 	}
 	return result;
 }
@@ -100,7 +97,7 @@ void MinHeapify(vertex* element, int index) {
 		return;
 	int left_child = left(index);
 	int right_child = right(index);
-	if (right_child > g_heap_size) {  //that is missing point!!! i only consider right_child but left_child is also bigger than heap_size in other case.
+	if (right_child > g_heap_size) { 
 		if (element[index].distance >= element[left_child].distance && left_child <= g_heap_size) {
 			swap_element(element, left_child, index);
 			MinHeapify(element, left_child);
@@ -121,18 +118,18 @@ void MinHeapify(vertex* element, int index) {
 		}
 	}
 }
-void insert(vertex* element, vertex key)
+void insert(vertex* heap, vertex key,vertex* element)
 {
-	if (key.status == BLACK)
+	if (key.status == BLACK)  // it prevent element blacked from inserting the heap. but when the element is blacked,it cannot remove the element being blacked.so i make 72 line code to block.  pulling out elements that are already black.
 		return;
 	g_heap_size++;
-	element[g_heap_size].distance = -100;
+	heap[g_heap_size].distance = -100;
 	if (g_heap_size > 1) {
 		//cout << "in increase key g_heap size is : " << g_heap_size << endl;
-		Increase_key(element, g_heap_size, key);
+		Increase_key(heap, g_heap_size, key);
 	}
 	else
-		element[1] = key;
+		heap[1] = key;
 }
 vertex ExtractMin(vertex* element)
 {
