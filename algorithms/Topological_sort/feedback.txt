@@ -1,0 +1,12 @@
+connected_component를 먼저 코드를 짜고 topological sort를 짜니 크게 어려움이 없었다
+Dijkstra에서 priorty_queue를  STL을 안쓰고 하다보니 수정해야할 것도 있었고 그러한 것들때문에 손이갔는데
+이번엔 C++ 최대장점 STL을 살려 stack container를 사용했다.그덕분에 Topological sort에서 가장 중요한
+stack 구문을 쉽게 처리하는것이 가능했다. 사실 topological sort가 2학년때 한번 깨닫고 난뒤 크게
+어렵지 않았던 터라 손으로 구문들을 나열해서 코드 전체를 그릴때 시간이 얼마 걸리지 않았다.
+DAG를 판단하는것은 connected_component의 경험을 살려 group_num이 1이 나올때 당연히
+cycle이 돈다는것이기에 그걸 통해 처리했다. 여기서 가장 당황스러웠던게 vector<int> result를
+main 함수에 선언해두고 Topological sort 함수에서 stack에서 poped된 vertex들을 push_back을 통해
+넣어줌으로써 깔끔하게 코드를 짜고 싶었으나 한가지 간과했던게 vector를 heap영역에 저장되는 object와
+같이 생각해버리는 바람에 당황했었다.당연히 메인에 선언된 vector가 멤버함수로 들어갈때 값이 복사된다는
+것을 생각못해 indegree_array가 global variable 의 소임을 다하고 아깝게 메모리를 잡아먹고 있기 때문에
+그걸 output array로 재활용해 메모리를 아끼고자 했다.
